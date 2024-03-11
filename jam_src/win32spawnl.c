@@ -40,7 +40,8 @@ intptr_t _win32_spawn(const char *cmdname, const char *params, ExecOutputFilter 
   sa.lpSecurityDescriptor = NULL;
   sa.bInheritHandle = TRUE;
 
-  if (!CreatePipe (&output_read, &output_write, &sa, 0))
+  const DWORD pipeSize = 1'000'000; // more bytes than any compiler is expected to write to its stdout
+  if (!CreatePipe (&output_read, &output_write, &sa, pipeSize))
     return -1;
 
   if (!DuplicateHandle(hProc, output_write, hProc, &stdout_write, 0, TRUE, DUPLICATE_SAME_ACCESS))
